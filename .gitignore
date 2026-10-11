@@ -11,7 +11,7 @@ ENV/
 
 # Game executables and data
 *.exe
-!tools/patcher/**
+!patcher/**
 *.bak
 *.ogg
 *.dat.bak
