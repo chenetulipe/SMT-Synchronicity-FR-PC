@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMT Synchronicity - Web Patcher FR</title>
+  <meta name="description" content="Patcher officiel pour Shin Megami Tensei: Synchronicity Prologue FR" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { 
+            sans: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          animation: {
+            'blob': 'blob 10s infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #020617;
+      color: #f8fafc;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* Liquid Glass Effect */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .glass-button {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+    .glass-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Gradient Text */
+    .text-gradient {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Animated Stripes */
+    .progress-bar-stripes {
+      background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+      background-size: 1rem 1rem;
+      animation: progress-stripes 1s linear infinite;
+    }
+    @keyframes progress-stripes {
+      from { background-position: 1rem 0; }
+      to { background-position: 0 0; }
+    }
+
+    /* Custom Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 999px; }
+  </style>
+</head>
+<body class="relative flex flex-col items-center justify-center p-4 sm:p-8">
+
+  <!-- Background Blobs (Liquid Glass effect background) -->
+  <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-600/30 rounded-full mix-blend-screen filter blur-[100px] opacity-70 animate-blob"></div>
+    <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-purple-600/30 rounded-full mix-blend-screen filter blur-[100px] opacity-70 animate-blob" style="animation-delay: 2s"></div>
+    <div class="absolute bottom-[-20%] left-[20%] w-[500px] h-[500px] bg-sky-600/20 rounded-full mix-blend-screen filter blur-[120px] opacity-60 animate-blob" style="animation-delay: 4s"></div>
+  </div>
+
+  <div class="max-w-4xl w-full flex flex-col items-center">
+    
+    <!-- Top Action Bar -->
+    <div class="w-full flex justify-between items-center mb-4 relative z-20">
+      <div class="flex items-center gap-2">
+        <span class="px-3 py-1 rounded-full bg-slate-800/60 border border-white/10 text-xs font-medium text-slate-300 backdrop-blur-md flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Serveur local actif
+        </span>
+      </div>
+      <button onclick="checkStatus()" class="glass-button flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-sky-100 hover:text-white group">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-500"></i>
+        <span>Actualiser les composants</span>
+      </button>
+    </div>
+
+    <!-- Main Glass Panel -->
+    <main class="glass-panel w-full rounded-[2rem] p-6 sm:p-10 relative overflow-hidden">
+      <!-- Decor line top -->
+      <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-500 opacity-80"></div>
+
+      <!-- Header -->
+      <header class="text-center mb-10 mt-2">
+        <h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-3">
+          SMT Synchronicity <span class="text-gradient">Web Patcher</span>
+        </h1>
+        <p class="text-slate-400 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
+          Appliquez la traduction française complète en quelques secondes.<br>
+          Le patch modifie directement votre jeu local en toute sécurité.
+        </p>
+      </header>
+
+      <!-- Info Card: Zero Copyright Atlus -->
+      <div class="mb-8 p-5 rounded-2xl bg-white/5 border border-white/5 flex gap-4 items-start shadow-inner">
+        <div class="p-2 bg-indigo-500/20 rounded-lg text-indigo-300 shrink-0 mt-1 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+          <i data-lucide="shield-check" class="w-5 h-5 text-sky-400"></i>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold text-slate-200 mb-1">Architecture 100% Légale et Respectueuse du Copyright</h4>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Ce patcher ne distribue <strong>aucun fichier protégé par le droit d'auteur</strong> d'Atlus. Les textures du jeu, le lanceur, les polices et dialogues sont modifiés par <strong>patchs différentiels binaires (bsdiff)</strong> appliqués sur votre copie originale (compatible version Japonaise v1.01 ou Anglaise), et la DLL est un proxy open-source assurant la traduction des menus et la Discord Rich Presence.
+          </p>
+        </div>
+      </div>
+
+      <!-- Status Cards (3 columns) -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        
+        <!-- Images Card -->
+        <div class="glass-card p-5 rounded-2xl relative overflow-hidden">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs uppercase font-semibold tracking-wider text-slate-400">Textures FR</span>
+            <span id="dot-img" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="p-2.5 bg-sky-500/10 rounded-xl border border-sky-500/20 text-sky-400">
+              <i data-lucide="image" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div id="val-img" class="text-lg font-bold text-white font-mono">—</div>
+              <div class="text-xs text-slate-400" id="sub-img">Diff bsdiff binaire</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fonts Card -->
+        <div class="glass-card p-5 rounded-2xl relative overflow-hidden">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs uppercase font-semibold tracking-wider text-slate-400">Polices & Textes</span>
+            <span id="dot-fnt" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="p-2.5 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-indigo-400">
+              <i data-lucide="type" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div id="val-fnt" class="text-lg font-bold text-white font-mono">—</div>
+              <div class="text-xs text-slate-400">Patch différentiel bsdiff</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DLL Card -->
+        <div class="glass-card p-5 rounded-2xl relative overflow-hidden">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs uppercase font-semibold tracking-wider text-slate-400">Module Proxy</span>
+            <span id="dot-dll" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="p-2.5 bg-purple-500/10 rounded-xl border border-purple-500/20 text-purple-400">
+              <i data-lucide="cpu" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div id="val-dll" class="text-lg font-bold text-white font-mono">—</div>
+              <div class="text-xs text-slate-400">Menus & Discord RPC</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Game Directory Input -->
+      <div class="mb-8">
+        <label class="block text-sm font-semibold text-slate-200 mb-2 flex items-center justify-between">
+          <span class="flex items-center gap-2">
+            <i data-lucide="folder" class="w-4 h-4 text-sky-400"></i>
+            Dossier du jeu ou Archive (.rar / .zip)
+          </span>
+          <span class="text-xs font-normal text-slate-400">Compatible version Japonaise ou Anglaise</span>
+        </label>
+        <div class="relative">
+          <input 
+            type="text" 
+            id="game-path" 
+            value="" 
+            class="w-full bg-slate-900/60 border border-white/10 rounded-xl px-4 py-3.5 text-sm font-mono text-slate-200 focus:outline-none focus:border-sky-400 transition-colors shadow-inner"
+            placeholder="Exemple : C:\Jeux\Shin Megami Tensei - Synchronicity ou fichier .rar"
+          />
+        </div>
+      </div>
+
+      <!-- Component Checkboxes -->
+      <div class="mb-8 p-5 rounded-2xl bg-white/5 border border-white/5">
+        <h4 class="text-xs uppercase font-semibold tracking-wider text-slate-400 mb-4">Composants à appliquer</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/40 border border-white/5 cursor-pointer hover:border-white/15 transition-colors">
+            <input type="checkbox" id="chk-img" checked class="mt-0.5 rounded border-slate-700 text-sky-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+            <div>
+              <div class="text-sm font-medium text-slate-200">Textures FR</div>
+              <div class="text-xs text-slate-400 mt-0.5">Injection dans megaten.exe</div>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/40 border border-white/5 cursor-pointer hover:border-white/15 transition-colors">
+            <input type="checkbox" id="chk-fnt" checked class="mt-0.5 rounded border-slate-700 text-indigo-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+            <div>
+              <div class="text-sm font-medium text-slate-200">Textes & Polices</div>
+              <div class="text-xs text-slate-400 mt-0.5">Traduction dial.dat & polices</div>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/40 border border-white/5 cursor-pointer hover:border-white/15 transition-colors">
+            <input type="checkbox" id="chk-dll" checked class="mt-0.5 rounded border-slate-700 text-purple-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+            <div>
+              <div class="text-sm font-medium text-slate-200">winmm.dll</div>
+              <div class="text-xs text-slate-400 mt-0.5">Launcher & Discord RPC</div>
+            </div>
+          </label>
+
+        </div>
+      </div>
+
+      <!-- Status Alert Box -->
+      <div id="alert-box" class="hidden mb-6 p-4 rounded-xl border flex items-start gap-3 backdrop-blur-sm transition-all">
+        <i id="alert-icon" data-lucide="info" class="w-5 h-5 shrink-0 mt-0.5"></i>
+        <div class="flex-1">
+          <h4 id="alert-title" class="font-semibold text-sm mb-1">Statut</h4>
+          <p id="alert-msg" class="text-sm opacity-90">Message</p>
+        </div>
+      </div>
+
+      <!-- Progress Area -->
+      <div id="progress-container" class="hidden mb-8">
+        <div class="flex justify-between text-sm mb-2 font-medium text-slate-300">
+          <span id="progress-text">Progression...</span>
+          <span id="progress-pct" class="font-mono">0%</span>
+        </div>
+        <div class="h-3 w-full bg-slate-800/80 rounded-full overflow-hidden border border-slate-700/50 shadow-inner">
+          <div id="progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-indigo-500 progress-bar-stripes rounded-full shadow-[0_0_10px_rgba(56,189,248,0.5)] transition-all duration-300 ease-out" style="width: 0%"></div>
+        </div>
+
+        <!-- Terminal Logs -->
+        <div class="mt-4 rounded-xl bg-slate-950/70 border border-white/10 p-4 font-mono text-xs text-slate-300 custom-scrollbar max-h-48 overflow-y-auto" id="log-box"></div>
+      </div>
+
+      <!-- Action Button -->
+      <button id="btn-patch" onclick="startPatch()" class="relative w-full group overflow-hidden rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg">
+        <!-- Button Background Gradient -->
+        <div id="btn-bg" class="absolute inset-0 bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600 transition-all duration-500 group-hover:bg-[length:200%_auto] group-hover:bg-right"></div>
+        <!-- Button Content -->
+        <div class="relative flex items-center justify-center gap-3 py-4 px-6 text-white font-semibold text-lg">
+          <i data-lucide="sparkles" id="btn-icon" class="w-5 h-5"></i>
+          <span id="btn-text">Appliquer le Patch FR</span>
+        </div>
+      </button>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center flex flex-col items-center gap-3 opacity-70 hover:opacity-100 transition-opacity">
+      <div class="flex items-center gap-2 text-sm text-slate-400 font-medium">
+        <span>Shin Megami Tensei Synchronicity Prologue - Projet de traduction FR</span>
+      </div>
+      <div class="flex items-center gap-3 text-xs flex-wrap justify-center">
+        <span class="px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-300 backdrop-blur-md shadow-sm">
+          Licence Non Commerciale
+        </span>
+        <span class="px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-300 backdrop-blur-md shadow-sm flex items-center gap-1.5">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> 100% Légal & Sécurisé
+        </span>
+        <span class="px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-300 backdrop-blur-md shadow-sm flex items-center gap-1.5">
+          <i data-lucide="disc" class="w-3.5 h-3.5 text-sky-400"></i> Backup automatique inclus
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    let polling = null;
+    let logCount = 0;
+
+    const btnPatch = document.getElementById('btn-patch');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
+    
+    const alertBox = document.getElementById('alert-box');
+    const alertTitle = document.getElementById('alert-title');
+    const alertMsg = document.getElementById('alert-msg');
+    const alertIcon = document.getElementById('alert-icon');
+    
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const progressPct = document.getElementById('progress-pct');
+    const logBox = document.getElementById('log-box');
+
+    async function checkStatus() {
+      try {
+        const s = await fetch('/api/status').then(r => r.json());
+        
+        // Textures
+        if (s.bsdiff_ready) {
+          document.getElementById('val-img').textContent = 'Prêt';
+          document.getElementById('sub-img').textContent = 'Diff bsdiff (JP & EN)';
+          setDot('dot-img', true);
+        } else {
+          const hasImg = s.modified_images > 0;
+          document.getElementById('val-img').textContent = hasImg ? s.modified_images : '0';
+          document.getElementById('sub-img').textContent = 'Images modifiées';
+          setDot('dot-img', hasImg);
+        }
+        
+        // Fonts
+        const hasFnt = s.font_patches > 0;
+        document.getElementById('val-fnt').textContent = hasFnt ? `${s.font_patches} patch` : '0';
+        setDot('dot-fnt', hasFnt);
+        
+        // DLL
+        document.getElementById('val-dll').textContent = s.dll ? 'Prêt' : 'Absent';
+        setDot('dot-dll', s.dll);
+
+        // Auto-remplissage du chemin si detecte et champ vide
+        const pathInput = document.getElementById('game-path');
+        if (!pathInput.value && s.detected_path) {
+          pathInput.value = s.detected_path;
+        }
+
+        lucide.createIcons();
+      } catch (e) {
+        setDot('dot-img', false);
+        setDot('dot-fnt', false);
+        setDot('dot-dll', false);
+      }
+    }
+
+    function setDot(id, ok) {
+      const el = document.getElementById(id);
+      if (ok) {
+        el.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]';
+      } else {
+        el.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]';
+      }
+    }
+
+    function showAlert(title, msg, type) {
+      alertBox.classList.remove('hidden', 'bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-200', 'bg-red-500/10', 'border-red-500/30', 'text-red-200', 'bg-sky-500/10', 'border-sky-500/30', 'text-sky-200');
+      
+      if (type === 'success') {
+        alertBox.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-200');
+        alertIcon.setAttribute('data-lucide', 'check-circle-2');
+      } else if (type === 'error') {
+        alertBox.classList.add('bg-red-500/10', 'border-red-500/30', 'text-red-200');
+        alertIcon.setAttribute('data-lucide', 'alert-triangle');
+      } else {
+        alertBox.classList.add('bg-sky-500/10', 'border-sky-500/30', 'text-sky-200');
+        alertIcon.setAttribute('data-lucide', 'info');
+      }
+      
+      alertTitle.textContent = title;
+      alertMsg.textContent = msg;
+      lucide.createIcons();
+    }
+
+    async function startPatch() {
+      const path = document.getElementById('game-path').value.trim();
+      if (!path) {
+        showAlert('Chemin manquant', 'Veuillez renseigner le dossier du jeu.', 'error');
+        return;
+      }
+
+      btnPatch.disabled = true;
+      btnText.textContent = 'Application en cours...';
+      btnIcon.setAttribute('data-lucide', 'loader-2');
+      btnIcon.classList.add('animate-spin');
+      lucide.createIcons();
+
+      progressContainer.classList.remove('hidden');
+      alertBox.classList.add('hidden');
+      logBox.innerHTML = '';
+      logCount = 0;
+
+      try {
+        await fetch('/api/patch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            game_path: path,
+            do_images: document.getElementById('chk-img').checked,
+            do_fonts: document.getElementById('chk-fnt').checked,
+            do_dll: document.getElementById('chk-dll').checked,
+          })
+        });
+      } catch (e) {
+        showAlert('Erreur réseau', 'Impossible de contacter le backend du patcher.', 'error');
+        resetButton();
+        return;
+      }
+
+      polling = setInterval(poll, 350);
+    }
+
+    async function poll() {
+      try {
+        const p = await fetch('/api/progress').then(r => r.json());
+        const pct = p.total > 0 ? Math.round(p.done / p.total * 100) : 0;
+
+        progressBar.style.width = pct + '%';
+        progressPct.textContent = pct + '%';
+        progressText.textContent = p.step || 'Traitement...';
+
+        (p.log || []).slice(logCount).forEach(l => {
+          const div = document.createElement('div');
+          div.className = 'py-0.5 ' + (l.startsWith('ERR') ? 'text-red-400' : (l.startsWith('OK') || l.startsWith('DONE') ? 'text-emerald-400' : 'text-slate-300'));
+          div.textContent = l;
+          logBox.appendChild(div);
+          logBox.scrollTop = logBox.scrollHeight;
+        });
+        logCount = (p.log || []).length;
+
+        if (p.finished) {
+          clearInterval(polling);
+          resetButton();
+
+          if (p.error) {
+            showAlert('Échec du patch', p.error, 'error');
+          } else {
+            showAlert('Patch appliqué avec succès !', 'Votre jeu est maintenant traduit en français. Vous pouvez lancer synchronicity.exe pour jouer.', 'success');
+            progressBar.classList.remove('progress-bar-stripes');
+            progressBar.classList.add('bg-emerald-500');
+          }
+        }
+      } catch (_) {}
+    }
+
+    function resetButton() {
+      btnPatch.disabled = false;
+      btnText.textContent = 'Appliquer le Patch FR';
+      btnIcon.setAttribute('data-lucide', 'sparkles');
+      btnIcon.classList.remove('animate-spin');
+      lucide.createIcons();
+    }
+
+    checkStatus();
+  </script>
+</body>
+</html>
