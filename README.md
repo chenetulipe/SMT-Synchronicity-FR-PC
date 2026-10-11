@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="assets/logo.png" width="340" alt="Shin Megami Tensei Synchronicity Prologue Logo">
-</p>
-
 # Shin Megami Tensei: Synchronicity Prologue (Traduction Française)
 
 Projet de localisation française intégrale pour le jeu PC **Shin Megami Tensei: Synchronicity Prologue**, compatible avec les versions japonaises officielles (v1.00 et v1.01) ainsi qu'avec la version anglaise.
@@ -66,7 +62,7 @@ Le patcher est conçu pour respecter scrupuleusement la propriété intellectuel
 
 1. Téléchargez l'archive `SMT-Synchronicity-FR-Patcher-v1.0.zip` depuis la page des publications du projet.
 2. Décompressez le dossier du patcher sur votre ordinateur.
-3. Lancez le fichier `lancer_patcher.bat`.
+3. Lancez le fichier `patcher/lancer_patcher.bat` (ou `lancer_patcher.bat`).
 4. L'interface s'ouvre dans votre navigateur par défaut (`http://localhost:8765`).
 5. Renseignez l'emplacement de votre jeu (ou sélectionnez directement l'archive d'origine du jeu).
 6. Cliquez sur le bouton "Appliquer le Patch FR". L'opération s'effectue en une fraction de seconde.

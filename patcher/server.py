@@ -24,7 +24,7 @@ import urllib.parse
 from pathlib import Path
 
 SCRIPT_DIR    = Path(__file__).resolve().parent
-REPO_DIR      = SCRIPT_DIR.parent.parent
+REPO_DIR      = SCRIPT_DIR.parent
 
 MODIFIED_IMAGES_DIR = SCRIPT_DIR / "patch_data" / "modified_images"
 LAUNCHER_IMAGES_DIR = SCRIPT_DIR / "patch_data" / "launcher_images"
