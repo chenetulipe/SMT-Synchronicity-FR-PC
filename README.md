@@ -1,6 +1,4 @@
-# Shin Megami Tensei: Synchronicity Prologue (Traduction Française)
-
-Projet de localisation française intégrale pour le jeu PC **Shin Megami Tensei: Synchronicity Prologue**, compatible avec les versions japonaises officielles (v1.00 et v1.01) ainsi qu'avec la version anglaise.
+# Shin Megami Tensei: Synchronicity Prologue (Traduction Francaise)
 
 [![Version](https://img.shields.io/badge/Version-1.0-blue)](#guide-dinstallation)
 [![Statut](https://img.shields.io/badge/Statut-Traduction_Complete-brightgreen)](#contenu-de-la-traduction)
