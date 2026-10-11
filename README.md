@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/badge/Version-1.0-blue)](#guide-dinstallation)
 [![Statut](https://img.shields.io/badge/Statut-Traduction_Complete-brightgreen)](#contenu-de-la-traduction)
-[![Licence](https://img.shields.io/badge/Licence-CC_BY--NC--SA_4.0-lightgrey)](#architecture-technique-et-legalite)
+[![Licence](https://img.shields.io/badge/Licence-CC_BY--NC--SA_4.0-lightgrey)](LICENSE)
 [![Plateforme](https://img.shields.io/badge/Plateforme-PC_Windows-informational)](#guide-dinstallation)
 [![Format de patch](https://img.shields.io/badge/Patch-bsdiff_binaire-success)](#architecture-technique-et-legalite)
 
@@ -45,6 +45,7 @@ Le patcher est conçu pour respecter scrupuleusement la propriété intellectuel
 3. **Détection automatique de version** : Le patcher analyse la signature SHA-256 de votre jeu et applique le delta approprié selon que vous possédiez la version japonaise originale v1.01 ou la version anglaise.
 4. **Sécurité des données** : Une copie de sauvegarde (`megaten.exe.bak`) est créée automatiquement avant la moindre modification.
 5. **Proxy système ouvert** : La DLL `winmm.dll` est un proxy open-source assurant le relais des appels de menus et la communication Discord RPC sans modification permanente des bibliothèques de votre système d'exploitation.
+6. **Licence libre et non commerciale** : L'ensemble du projet, ses traductions, ses scripts et ses outils sont distribués sous licence [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](LICENSE) (CC BY-NC-SA 4.0).
 
 ---
 
