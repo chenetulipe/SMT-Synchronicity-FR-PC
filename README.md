@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="assets/logo.png" width="340" alt="Shin Megami Tensei Synchronicity Prologue Logo">
-</p>
-
 # Shin Megami Tensei: Synchronicity Prologue (Traduction Francaise)
 
 Projet de localisation francaise integrale pour le jeu PC **Shin Megami Tensei: Synchronicity Prologue**, compatible avec les versions japonaises officielles (v1.00 et v1.01) ainsi qu'avec la version anglaise.
